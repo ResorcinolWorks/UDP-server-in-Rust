@@ -1,13 +1,19 @@
 use std::net::UdpSocket;
 use std::io::{self, Write};
+use std::env;
 
 fn main() -> std::io::Result<()> {
+    // Get server IP and port from environment variables or use defaults
+    let server_ip = env::var("SERVER_IP").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let server_port = env::var("SERVER_PORT").unwrap_or_else(|_| "8080".to_string());
+    let server_addr = format!("{}:{}", server_ip, server_port);
+
     // Create a UDP socket
     let socket = UdpSocket::bind("127.0.0.1:0")?;
     
     // Connect to the server
-    socket.connect("127.0.0.1:8080")?;
-    println!("Connected to server at 127.0.0.1:8080");
+    socket.connect(&server_addr)?;
+    println!("Connected to server at {}", server_addr);
 
     // Buffer for receiving data
     let mut buf = [0; 1024];
